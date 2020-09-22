@@ -1,12 +1,5 @@
-import java.util.Scanner;
-import java.io.BufferedReader;
+import java.util.Scanner; 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class Program {
 
@@ -29,12 +22,9 @@ public class Program {
 			}
 		}
 		in.close();
-		//printMatrix(x, y, matrix);
 		SudokuSolver solve = new SudokuSolver(0,0, matrix); //0,0 just acts as the starting place to solve from
-		ArrayList<Integer> banned = new ArrayList<Integer>();
-		banned.clear();
-		solve.solveMatrix();
-		printMatrix(x, y, solve.matrix);
+		solve.solveMatrix(0, 0);
+		solve.printMatrix();
 		
 		
 	}

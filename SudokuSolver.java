@@ -1,6 +1,3 @@
-import java.util.ArrayList;
-
-
 public class SudokuSolver {
 		
 	int [][] matrix;
@@ -13,48 +10,49 @@ public class SudokuSolver {
 		this.y = y;
 	}
 	
-	//problem here is that there (I assume and hence may be wrong) is a list of banned integers for a spot, since there are more valid integers 
-	//The way I was going to initially solve this was with an additional class which just had ArrayLists of integers
-	//if you failed a current entry then you look one move back, ban the integer currently there and try and solve for another integer
-	//however if that fails you should move one back and repeat (ban and check for valid)
-	//then when you go forward you should unban the banned integer for that place at current(i.e when moving forwards always clear banned ints
-	//when moving backwards always add the int in that location to banned
-	//never clear the last arraylist you were on which was where there was a banned int that caused the problem (or dont, this is where unsure)
-	//unsure since there is a chance that the banned ints will cause a problem for any one of them and hence they are invalid numbers that could
-	//be added if we went back.
-	//this is fine since if we moved back too many times we'd get to a scenario where all numbers are banned and hence the previous number may 
-	//be the issue and at this point we sort that position out, then move forward and clear as we go forward (reseting)
-	
-	public void solveMatrix() {
-		while(gridComplete() == false) {
-			System.out.println("--------------------");
-			for(int i = 0 ; i < 9 ; ++i) {//runs rows
-				for(int j = 0 ; j < 9 ; ++j) { //runs cols
-					if(matrix[i][j] == 0) {
-						boolean someValidMove = false; //assume no valid move
-						for(int num = 1 ; num < 10 ; ++num) {
-							//System.out.print(" " + num + " ");
-							if(validMove(i,j,num)){
-								matrix[i][j] = num;
-								someValidMove = true; //we found a valid move
-							}
-						}
-						if(someValidMove == false) {//clearly there was an issue and some move we made prior is an issue so we must go back
-							//have not dealt with this case
-						}
+	public boolean solveMatrix(int i, int j) { //i = row, j = col and num is what we want to place
+			
+		if(i == 9) {
+			return true;
+		}
+		
+		if(matrix[i][j] == 0 ) {
+			for(int temp = 1 ; temp < 10 ; ++temp) {
+				if(validMove(i,j,temp)) {
+					matrix[i][j] = temp;
+					int[] vals = update(i,j);
+					if(solveMatrix(vals[0],vals[1])) {
+						return true;
 					}
 				}
 			}
-			printMatrix(); //print after each each attempt			
+			matrix[i][j] = 0;
+			return false;
+		}
+		else {
+			int[] vals = update(i,j);
+			return solveMatrix(vals[0],vals[1]);
 		}
 	}
 	
+	public int[] update(int i, int j) {
+		if(j == 8) {
+			j=0;
+			++i;
+		}
+		else {
+			++j;
+		}
+		int[] vals = new int[2];
+		vals[0] = i;
+		vals[1] = j;
+		return vals;
+	}
 	
 	public boolean gridComplete() { //check the entirety of the grid
 		for(int i = 0 ; i < 9 ; ++i) {
 			for(int j = 0 ; j < 9 ; ++j) {
 				if(matrix[i][j] == 0) { //if there are any zeros grid not complete
-					//System.out.println("false");
 					return false;
 				}
 			}
@@ -66,6 +64,9 @@ public class SudokuSolver {
 		if(validHorizontal(row, col, num)) { //valid in hor
 			if(validVertical(row, col, num)) { // valid in ver
 				if(validBlock(row, col, num)) { // valid in block
+					if(num == 10) {
+						return false;
+					}
 					return true; //all are valid therefore valid move
 				}
 			}
@@ -92,15 +93,12 @@ public class SudokuSolver {
 	}
 	
 	public boolean validBlock(int row, int col, int num) { //check if there is a num in my column with a value I want
-		//use integer division to solve
-		int one = row/3;
-		int temp1;
-		int temp2;
-		for(int i = 0 ; i < 2 ; ++i) {//index rows
-			for(int j = 0 ; j < 2 ; ++j) {//index cols
-				temp1 = one*3 + i;
-				temp2 = one*3 +j;
-				if(matrix[temp1][temp2] == num) {
+		int baseRow = row/3 *3;
+		int baseCol = col/3 *3;
+		//printBlock(row,col);
+		for(int i = 0 ; i < 3 ; ++i) {
+			for(int j = 0 ; j < 3 ; ++j) {
+				if(num == matrix[baseRow+i][baseCol+j]) {
 					return false;
 				}
 			}
@@ -112,6 +110,22 @@ public class SudokuSolver {
 		for(int i = 0 ; i < 9 ; ++i) {
 			for(int j = 0 ; j < 9 ; ++j) {
 				System.out.print(matrix[i][j]);
+				if(j != 8) {
+					System.out.print(" ");
+				}
+			}
+			if(i != 8) {
+				System.out.println();
+			}
+		}
+	}
+	
+	public void printBlock(int row, int col) {
+		int baseRow = row/3 *3;
+		int baseCol = col/3 *3;
+		for(int i = 0 ; i < 3 ; ++i) {
+			for(int j = 0 ; j < 3 ; ++j) {
+				System.out.print(matrix[baseRow+i][baseCol+j]);
 			}
 			System.out.println();
 		}
