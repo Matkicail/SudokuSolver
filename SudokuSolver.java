@@ -110,9 +110,9 @@ public class SudokuSolver {
 		for(int i = 0 ; i < 9 ; ++i) {
 			for(int j = 0 ; j < 9 ; ++j) {
 				System.out.print(matrix[i][j]);
-				if(j != 8) {
+				//if(j != 8) {
 					System.out.print(" ");
-				}
+				//}
 			}
 			if(i != 8) {
 				System.out.println();
