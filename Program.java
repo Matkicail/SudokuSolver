@@ -5,8 +5,7 @@ public class Program {
 
 	public static void main(String[] args) throws Exception {
 		
-		//readCSVMatrices(); //check bottom to see what this is for please 
-		
+		//readCSVMatrices(); //check bottom to see what this is for please
 		 Scanner in = new Scanner(System.in);
 		
 		int x = 9;
@@ -22,11 +21,10 @@ public class Program {
 			}
 		}
 		in.close();
+
 		SudokuSolver solve = new SudokuSolver(0,0, matrix); //0,0 just acts as the starting place to solve from
 		solve.solveMatrix(0, 0);
 		solve.printMatrix();
-		
-		
 	}
 	
 	public static void printMatrix(int x, int y, int[][] matrix) { //simple print function - can be improved for readability with spaces

@@ -1,3 +1,5 @@
+import java.awt.PointerInfo;
+
 public class SudokuSolver {
 		
 	int [][] matrix;
@@ -16,14 +18,16 @@ public class SudokuSolver {
 			return true;
 		}
 		
-		if(matrix[i][j] == 0 ) {
-			for(int temp = 1 ; temp < 10 ; ++temp) {
-				if(validMove(i,j,temp)) {
-					matrix[i][j] = temp;
-					int[] vals = update(i,j);
-					if(solveMatrix(vals[0],vals[1])) {
-						return true;
-					}
+		if(matrix[i][j] == 0) {
+			boolean[] valid = getValidNumbers(i, j);
+			for(int temp = 1; temp < 10; ++temp) 
+			{
+				if(valid[temp-1])
+					continue;
+				matrix[i][j] = temp;
+				int[] vals = update(i,j);
+				if(solveMatrix(vals[0],vals[1])) {
+					return true;
 				}
 			}
 			matrix[i][j] = 0;
@@ -35,7 +39,43 @@ public class SudokuSolver {
 		}
 	}
 	
-	public int[] update(int i, int j) {
+	public boolean[] getValidNumbers(int row, int col)
+	{
+		//Defaults to false
+		boolean[] valid = new boolean[9];
+		
+		//Set all values to true for row search
+		for (int j = 0; j < 9; ++j)
+		{
+			if(matrix[row][j] != 0)
+				valid[matrix[row][j]-1] = true;
+		}
+		
+		//Set all values to true for col search
+		for (int i = 0; i < 9; ++i)
+		{
+			if(matrix[i][col] != 0)
+				valid[matrix[i][col]-1] = true;
+		}
+		
+		//set all values to true for block search
+		int baseRow = row/3 *3;
+		int baseCol = col/3 *3;
+		//printBlock(row,col);
+		for(int i = 0 ; i < 3 ; ++i) {
+			for(int j = 0 ; j < 3 ; ++j) {
+				if(matrix[baseRow+i][baseCol+j] != 0) {
+					valid[matrix[baseRow+i][baseCol+j]-1] = true;
+				}
+			}
+		}
+		
+		return valid;
+	}
+	
+	
+	public int[] update(int i, int j) 
+	{
 		if(j == 8) {
 			j=0;
 			++i;
